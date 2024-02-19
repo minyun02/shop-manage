@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -43,22 +44,21 @@ public class OrdersService {
                 OrdersDTO zigzagDto = OrdersDTO.fromMap(zigzag);
                 ordersRepository.save(Orders.of(zigzagDto));
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
         if (!smartStore.isEmpty()) {
             try {
                 OrdersDTO smartStoreDto = OrdersDTO.fromMap(smartStore);
-                System.out.println(smartStoreDto);
                 ordersRepository.save(Orders.of(smartStoreDto));
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
     }
 
-    public HashMap<String, Integer> readOrders(MultipartFile excelFile) {
-        HashMap<String, Integer> orders = new HashMap<>();
+    public Map<String, Integer> readOrders(MultipartFile excelFile) {
+        Map<String, Integer> orders = new HashMap<>();
 
         try {
             Workbook workbook = new XSSFWorkbook(excelFile.getInputStream());
@@ -79,14 +79,14 @@ public class OrdersService {
         return orders;
     }
 
-    public ArrayList<OrderCollect> makeOrdersForTable(HashMap<String, Integer> collectedOrders) {
+    public List<OrderCollect> makeOrdersForTable(Map<String, Integer> collectedOrders) {
         ordersForTable.clear();
 
-        for (String key : collectedOrders.keySet()) {
+        for (Map.Entry<String, Integer> entry : collectedOrders.entrySet()) {
             ordersForTable.add(OrderCollect.builder()
-                            .productName(key.split("\\+")[0])
-                            .option(key.split("\\+")[1])
-                            .quantity(collectedOrders.get(key))
+                            .productName(entry.getKey().split("\\+")[0])
+                            .option(entry.getKey().split("\\+")[1])
+                            .quantity(entry.getValue())
                             .build()
             );
 

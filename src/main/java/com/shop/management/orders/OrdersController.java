@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/v1/orders")
@@ -40,8 +40,8 @@ public class OrdersController {
 
     @PostMapping("/readOrders")
     public String readOrders(@RequestParam("excelFile") MultipartFile excelFile, ModelMap model) {
-        HashMap<String, Integer> collectedOrders = ordersService.readOrders(excelFile);
-        ArrayList<OrderCollect> orders = ordersService.makeOrdersForTable(collectedOrders);
+        Map<String, Integer> collectedOrders = ordersService.readOrders(excelFile);
+        List<OrderCollect> orders = ordersService.makeOrdersForTable(collectedOrders);
 
         model.addAttribute("orders", orders);
 
