@@ -80,7 +80,7 @@ public class OrdersService {
     }
 
     public ArrayList<OrderCollect> makeOrdersForTable(HashMap<String, Integer> collectedOrders) {
-        ordersForTable = new ArrayList<>();
+        ordersForTable.clear();
 
         for (String key : collectedOrders.keySet()) {
             ordersForTable.add(OrderCollect.builder()
