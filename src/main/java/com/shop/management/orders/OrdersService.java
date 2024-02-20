@@ -3,6 +3,7 @@ package com.shop.management.orders;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.shop.management.orderCollect.OrdersCollectDTO;
 import com.shop.management.utils.ExcelExport;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,35 +30,72 @@ public class OrdersService {
 
     private final OrdersRepository ordersRepository;
 
-    private ArrayList<OrderCollect> ordersForTable = new ArrayList<>();
+    private ArrayList<OrdersCollectDTO> ordersForTable = new ArrayList<>();
 
-    public Page<OrdersDTO> getOrders(Pageable pageable) {
-        return ordersRepository.findAll(pageable).map(OrdersDTO::fromEntity);
+//    public Page<OrdersDTO> getOrders(Pageable pageable) {
+//        return ordersRepository.findAll(pageable).map(OrdersDTO::fromEntity);
+//    }
+//    public void saveOrdersOld(ObjectNode orders) throws JsonProcessingException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        Map<String, String> zigzag = mapper.treeToValue(orders.get("zigzag"), Map.class);
+//        Map<String, String> smartStore = mapper.treeToValue(orders.get("smartstore"), Map.class);
+//
+//        if (!zigzag.isEmpty()) {
+//            try {
+//                OrdersDTO zigzagDto = OrdersDTO.fromMap(zigzag);
+//                ordersRepository.save(Orders.of(zigzagDto));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        if (!smartStore.isEmpty()) {
+//            try {
+//                OrdersDTO smartStoreDto = OrdersDTO.fromMap(smartStore);
+//                ordersRepository.save(Orders.of(smartStoreDto));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
+
+
+    public List<OrdersCollectDTO> makeOrdersForTable(MultipartFile excelFile) {
+
+        fillOrdersForTable(readOrders(excelFile));
+        saveOrders();
+
+        return ordersForTable;
     }
-    public void saveOrders(ObjectNode orders) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, String> zigzag = mapper.treeToValue(orders.get("zigzag"), Map.class);
-        Map<String, String> smartStore = mapper.treeToValue(orders.get("smartstore"), Map.class);
 
-        if (!zigzag.isEmpty()) {
-            try {
-                OrdersDTO zigzagDto = OrdersDTO.fromMap(zigzag);
-                ordersRepository.save(Orders.of(zigzagDto));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        if (!smartStore.isEmpty()) {
-            try {
-                OrdersDTO smartStoreDto = OrdersDTO.fromMap(smartStore);
-                ordersRepository.save(Orders.of(smartStoreDto));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    private void saveOrders() {
+
     }
 
-    public Map<String, Integer> readOrders(MultipartFile excelFile) {
+    private void fillOrdersForTable(Map<String, Integer> readExcel) {
+        ordersForTable.clear();
+
+        for (Map.Entry<String, Integer> entry : readExcel.entrySet()) {
+            ordersForTable.add(OrdersCollectDTO.builder()
+                            .productName(entry.getKey().split("\\+")[0])
+                            .option(entry.getKey().split("\\+")[1])
+                            .quantity(entry.getValue())
+                            .build()
+            );
+        }
+
+    }
+
+    public void downloadExcel(HttpServletResponse response) throws IOException {
+        ExcelExport<T> excelExport = new ExcelExport<>(ordersForTable);
+        excelExport.write(response, "주문합치기"+ "_" + LocalDate.now().getYear() + "_" + LocalDate.now().getMonth());
+    }
+
+
+    /*
+    * private method
+    */
+    private Map<String, Integer> readOrders(MultipartFile excelFile) {
         Map<String, Integer> orders = new HashMap<>();
 
         try {
@@ -77,24 +115,5 @@ public class OrdersService {
         }
 
         return orders;
-    }
-
-    public List<OrderCollect> makeOrdersForTable(Map<String, Integer> collectedOrders) {
-        ordersForTable.clear();
-
-        for (Map.Entry<String, Integer> entry : collectedOrders.entrySet()) {
-            ordersForTable.add(OrderCollect.builder()
-                            .productName(entry.getKey().split("\\+")[0])
-                            .option(entry.getKey().split("\\+")[1])
-                            .quantity(entry.getValue())
-                            .build()
-            );
-
-        }
-        return ordersForTable;
-    }
-    public void downloadExcel(HttpServletResponse response) throws IOException {
-        ExcelExport<T> excelExport = new ExcelExport<>(ordersForTable);
-        excelExport.write(response, "주문합치기"+ "_" + LocalDate.now().getYear() + "_" + LocalDate.now().getMonth());
     }
 }

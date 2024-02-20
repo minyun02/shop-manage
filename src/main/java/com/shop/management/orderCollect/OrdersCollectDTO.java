@@ -1,9 +1,9 @@
-package com.shop.management.orders;
+package com.shop.management.orderCollect;
 
 import lombok.Builder;
 
 @Builder
-public class OrderCollect {
+public class OrdersCollectDTO {
     private String productName;
     private String option;
     private Integer quantity;

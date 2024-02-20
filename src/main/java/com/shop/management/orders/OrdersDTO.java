@@ -57,33 +57,33 @@ public record OrdersDTO(
         );
     }
 
-    public static OrdersDTO fromEntity(Orders entity) {
-        return new OrdersDTO(
-                entity.getSalesChannel(),
-                entity.getProductOrderNumber(),
-                entity.getOrderNumber(),
-                entity.getBuyerName(),
-                entity.getRecipientName(),
-                entity.getOrderStatus(),
-                entity.getOrderDate(),
-                entity.getPaymentDate(),
-                entity.getProductNumber(),
-                entity.getProductName(),
-                entity.getOptionInfo(),
-                entity.getQuantity(),
-                entity.getOptionPrice(),
-                entity.getProductPrice(),
-                entity.getProductDiscountAmount(),
-                entity.getSellerDiscountAmount(),
-                entity.getTotalOrderAmountPerProduct(),
-                entity.getSellerProductCode(),
-                entity.getShippingAddress(),
-                entity.getPostalCode(),
-                entity.getShippingOrigin(),
-                entity.getRegisteredDate(),
-                entity.getRegisteredBy()
-        );
-    }
+//    public static OrdersDTO fromEntity(Orders entity) {
+//        return new OrdersDTO(
+//                entity.getSalesChannel(),
+//                entity.getProductOrderNumber(),
+//                entity.getOrderNumber(),
+//                entity.getBuyerName(),
+//                entity.getRecipientName(),
+//                entity.getOrderStatus(),
+//                entity.getOrderDate(),
+//                entity.getPaymentDate(),
+//                entity.getProductNumber(),
+//                entity.getProductName(),
+//                entity.getOptionInfo(),
+//                entity.getQuantity(),
+//                entity.getOptionPrice(),
+//                entity.getProductPrice(),
+//                entity.getProductDiscountAmount(),
+//                entity.getSellerDiscountAmount(),
+//                entity.getTotalOrderAmountPerProduct(),
+//                entity.getSellerProductCode(),
+//                entity.getShippingAddress(),
+//                entity.getPostalCode(),
+//                entity.getShippingOrigin(),
+//                entity.getRegisteredDate(),
+//                entity.getRegisteredBy()
+//        );
+//    }
 
     public static Timestamp convertToTimeStamp(String date, String salesChannel) {
         String year = "";

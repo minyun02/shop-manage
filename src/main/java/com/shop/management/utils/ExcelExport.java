@@ -1,6 +1,6 @@
 package com.shop.management.utils;
 
-import com.shop.management.orders.OrderCollect;
+import com.shop.management.orderCollect.OrdersCollectDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
@@ -21,13 +21,12 @@ public class ExcelExport<T> {
     private SXSSFSheet sheet;
 
 
-//    public ExcelExport(List<T> data, Class<T> type) {
-    public ExcelExport(ArrayList<OrderCollect> data) {
+    public ExcelExport(ArrayList<OrdersCollectDTO> data) {
         this.wb = new SXSSFWorkbook();
         renderExcel(data);
     }
 
-    private void renderExcel(ArrayList<OrderCollect> data) {
+    private void renderExcel(ArrayList<OrdersCollectDTO> data) {
         sheet = wb.createSheet();
         List<String> columns = Arrays.stream("상품명,옵션,수량".split(",")).toList();
 //        createHeaders(sheet, ROW_START_INDEX, COLUMN_START_INDEX, objectType);
@@ -37,7 +36,7 @@ public class ExcelExport<T> {
 
         int rowIndex = ROW_START_INDEX + 1;
 
-        for (OrderCollect order : data) {
+        for (OrdersCollectDTO order : data) {
             createBody(order, rowIndex++, COLUMN_START_INDEX, columns);
         }
 
@@ -52,7 +51,7 @@ public class ExcelExport<T> {
         }
     }
 
-    private void createBody(OrderCollect order, int i, int columnStartIndex,  List<String> columns) {
+    private void createBody(OrdersCollectDTO order, int i, int columnStartIndex, List<String> columns) {
         SXSSFRow row = sheet.createRow(i);
 
         for (String column : columns) {

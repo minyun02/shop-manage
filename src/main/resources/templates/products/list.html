@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/default}"
+>
+
+<th:block layout:fragment="content">
+    <div class="container-fluid">
+
+        <h1 class="h3 mb-2 text-gray-800">판매 상품 목록</h1>
+        <p class="mb-4"><a target="_blank" href="https://datatables.net"></a></p>
+
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th width="50px">판매자코드</th>
+                            <th width="150px">상품명</th>
+                            <th width="150px">옵션</th>
+                            <th width="50px">보유재고</th>
+                            <th width="50px">반품/교환 재고</th>
+                            <th width="50px">미송 재고</th>
+                            <th width="50px">판매플랫폼</th>
+                            <th width="50px">판매 상태</th>
+                            <th width="150px">등록날짜</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product : ${products}">
+                            <td th:text="${product.sellerCode()}"></td>
+                            <td th:text="${product.productName()}"></td>
+                            <td th:text="${product.option()}"></td>
+                            <td th:text="${product.stocks()}"></td>
+                            <td th:text="${product.returnStocks()}"></td>
+                            <td th:text="${product.reservedStocks()}"></td>
+                            <td th:text="${product.sellingChannel()}"></td>
+                            <td th:text="${product.status()}"></td>
+                            <td th:text="${product.createdAt()}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script th:inline="javascript">
+        $('#dataTable').dataTable({
+            scrollX:true
+        });
+    </script>
+</th:block>
+</html>
