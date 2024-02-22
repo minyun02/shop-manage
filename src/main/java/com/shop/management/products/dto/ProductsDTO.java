@@ -1,9 +1,8 @@
-package com.shop.management.products;
+package com.shop.management.products.dto;
 
 import com.shop.management.orders.Orders;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 public record ProductsDTO(Long id,
                           String productName,
