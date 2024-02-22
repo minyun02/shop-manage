@@ -17,39 +17,147 @@
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                         <tr>
-                            <th width="50px">판매자코드</th>
-                            <th width="150px">상품명</th>
-                            <th width="150px">옵션</th>
-                            <th width="50px">보유재고</th>
-                            <th width="50px">반품/교환 재고</th>
-                            <th width="50px">미송 재고</th>
-                            <th width="50px">판매플랫폼</th>
-                            <th width="50px">판매 상태</th>
-                            <th width="150px">등록날짜</th>
+                            <th>판매자코드</th>
+                            <th>상품명</th>
+                            <th>옵션</th>
+                            <th>보유재고</th>
+                            <th>반품/교환 재고</th>
+                            <th>미송 재고</th>
+                            <th>판매플랫폼</th>
+                            <th>판매 상태</th>
+                            <th>등록날짜</th>
+                            <th width="40px"></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="product : ${products}">
-                            <td th:text="${product.sellerCode()}"></td>
-                            <td th:text="${product.productName()}"></td>
-                            <td th:text="${product.option()}"></td>
-                            <td th:text="${product.stocks()}"></td>
-                            <td th:text="${product.returnStocks()}"></td>
-                            <td th:text="${product.reservedStocks()}"></td>
-                            <td th:text="${product.sellingChannel()}"></td>
-                            <td th:text="${product.status()}"></td>
-                            <td th:text="${product.createdAt()}"></td>
-                        </tr>
+                            <tr th:each="product : ${products}">
+                                <td th:text="${product.sellerCode()}"></td>
+                                <td th:text="${product.productName()}"></td>
+                                <td th:text="${product.option()}"></td>
+                                <td th:text="${product.stocks()}"></td>
+                                <td th:text="${product.returnStocks()}"></td>
+                                <td th:text="${product.reservedStocks()}"></td>
+                                <td th:text="${product.sellingChannel()}"></td>
+                                <td th:text="${product.status()}"></td>
+                                <td th:text="${product.createdAt()}"></td>
+                                <td>
+                                    <button type="button"
+                                            class="btn btn-primary btn-modal"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#exampleModal"
+                                            th:data-id="${product.id()}"
+                                            th:data-seller-code="${product.sellerCode()}"
+                                            th:data-product-name="${product.productName()}"
+                                            th:data-option="${product.option()}"
+                                            th:data-stocks="${product.stocks()}"
+                                            th:data-return-stocks="${product.returnStocks()}"
+                                            th:data-reserved-stocks="${product.reservedStocks()}"
+                                            th:data-selling-channel="${product.sellingChannel()}"
+                                            th:data-status="${product.status()}"
+                                            th:text="${'수정' + productStat.index}"
+                                    >
+                                    </button>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+        <!-- The Modal -->
+        <div class="modal" id="exampleModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form th:method="POST" th:action="@{/api/v1/products/update}">
+                        <div class="modal-body">
+                                <input type="hidden" name="productId" id="productId">
+                                <div class="mb-3">
+                                    <label for="sellerCode" class="col-form-label">판매자 코드:</label>
+                                    <select class="form-control" name="sellerCode" id="sellerCode">
+                                        <option value="">선택</option>
+                                        <option value="도매1">도매1</option>
+                                        <option value="도매2">도매2</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="productName" class="col-form-label">상품명:</label>
+                                    <input class="form-control" name="productName" id="productName" readonly/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="option" class="col-form-label">옵션:</label>
+                                    <input class="form-control" name="option" id="option" readonly/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="stocks" class="col-form-label">보유 재고:</label>
+                                    <input class="form-control" name="stocks" id="stocks"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="returnStocks" class="col-form-label">반품/교환 재고:</label>
+                                    <input class="form-control" name="returnStocks" id="returnStocks"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reservedStocks" class="col-form-label">미송 재고:</label>
+                                    <input class="form-control" name="reservedStocks" id="reservedStocks"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="sellingChannel" class="col-form-label">판매 플랫폼:</label>
+                                    <select class="form-control" name="sellingChannel" id="sellingChannel">
+                                        <option value="">선택</option>
+                                        <option value="지그재그">지그재그</option>
+                                        <option value="스마트스토어">스마트스토어</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="status" class="col-form-label">판매 상태:</label>
+                                    <select class="form-control" name="status" id="status">
+                                        <option value="">선택</option>
+                                        <option value="판매">판매</option>
+                                        <option value="품절">품절</option>
+                                        <option value="중지">중지</option>
+                                    </select>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                            <button type="submit" class="btn btn-primary">저장</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
     </div>
     <script th:inline="javascript">
-        $('#dataTable').dataTable({
+        let table = $('#dataTable').dataTable({
+            autoWidth: true,
             scrollX:true
+        });
+
+        $(document).on("click", ".btn-modal", function() {
+            const productId = $(this).data('id');
+            const sellerCode = $(this).data('seller-code');
+            const productName = $(this).data('product-name');
+            const option = $(this).data('option');
+            const stocks = $(this).data('stocks');
+            const returnStocks = $(this).data('returnStocks');
+            const reservedStocks = $(this).data('reserved-stocks');
+            const sellingChannel = $(this).data('selling-channel');
+            const status = $(this).data('status');
+
+            $("#productId").val(productId);
+            $("#sellerCode").val(sellerCode);
+            $("#productName").val(productName);
+            $("#option").val(option);
+            $("#stocks").val(stocks);
+            $("#returnStocks").val(returnStocks);
+            $("#reservedStocks").val(reservedStocks);
+
+            $("#sellingChannel").val(sellingChannel).prop("selected", true);
+            $("#status").val(status).prop("selected", true);
         });
     </script>
 </th:block>
