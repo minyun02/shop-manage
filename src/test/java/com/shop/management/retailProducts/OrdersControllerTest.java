@@ -1,4 +1,4 @@
-package com.shop.management.orders;
+package com.shop.management.retailProducts;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

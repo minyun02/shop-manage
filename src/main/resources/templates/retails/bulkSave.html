@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/default}"
+>
+
+<th:block layout:fragment="content">
+  <div class="container-fluid">
+
+    <h1 class="h3 mb-2 text-gray-800">도매 상품 엑셀 등록</h1>
+    <p class="mb-4">도매 상품을 엑셀로 등록해보세요.</p>
+<!--    <a target="_blank" href="https://datatables.net">official DataTables documentation</a>-->
+
+    <form action="/api/v1/retails/readExcel" method="post" enctype="multipart/form-data">
+      <div style="display: flex;">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">엑셀업로드</span>
+          </div>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="inputGroupFile01" name="excelFile">
+            <label class="custom-file-label" for="inputGroupFile01">찾아보기</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">미리보기</button>
+        <button type="button" class="btn btn-primary" onclick="saveProducts()">저장</button>
+      </div>
+    </form>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+<!--      <div class="card-header py-3">-->
+<!--        <h6 class="m-0 font-weight-bold text-primary">주문 합치기</h6>-->
+<!--        <a href="#" onclick="document.forms['excelDownload'].submit()" class="btn btn-dark">엑셀 다운로드</a>-->
+<!--      </div>-->
+      <div class="card-body">
+        <div class="table-responsive">
+<!--          <form id="excelDownload" action="/api/v1/products/" method="POST" enctype="multipart/form-data">-->
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+              <tr>
+<!--                <th>중복여부</th>-->
+                <th>이름</th>
+                <th>상품명</th>
+                <th>옵션</th>
+                <th>사이즈</th>
+                <th>도매가</th>
+                <th>판매가</th>
+                <th>매칭상품</th>
+                <th>주문일</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr th:each="retail : ${retails}">
+<!--                  <td th:classappend="${retail.isDuplicated() ? 'bg-gray-300' : ''}" th:text="${retail.isDuplicated() ? '등록 상품' : ''}"></td>-->
+                  <td th:name="name" th:text="${retail.sellerName()}"></td>
+                  <td th:name="name" th:text="${retail.productName()}"></td>
+                  <td th:name="option" th:text="${retail.option()}"></td>
+                  <td th:name="option" th:text="${retail.size()}"></td>
+                  <td th:name="quantity" th:text="${retail.retailPrice()}"></td>
+                  <td th:name="quantity" th:text="${retail.sellingPrice()}"></td>
+                  <td th:name="quantity" th:text="${'wait'}"></td>
+                  <td th:name="quantity" th:text="${retail.orderedAt()}"></td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script th:inline="javascript">
+    const saveProducts = async () => {
+      await fetch("/api/v1/retails/saveNewRetails", {
+        method: "POST",
+        cache: "no-cache",
+        credentials: "same-origin",
+      });
+    };
+
+    $('#dataTable').dataTable();
+  </script>
+</th:block>
+</html>

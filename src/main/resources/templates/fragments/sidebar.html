@@ -17,7 +17,7 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" th:href="@{/api/v1/dashboard}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
@@ -28,42 +28,37 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            주문
-        </div>
-
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-               aria-expanded="true" aria-controls="collapseTwo">
-                <i class="fas fa-fw fa-cog"></i>
-                <span>주문관리</span>
-            </a>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">주문 관리:</h6>
-                    <a class="collapse-item" th:href="@{/api/v1/orders/organize}">주문 합치기</a>
-                </div>
-            </div>
-        </li>
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
             상품
         </div>
 
         <!-- Nav Item - Utilities Collapse Menu-->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-               aria-expanded="true" aria-controls="collapseUtilities">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts" aria-expanded="true" aria-controls="collapseProducts">
                 <i class="fas fa-fw fa-wrench"></i>
-                <span>상품관리</span>
+                <span>판매 상품 관리</span>
             </a>
-            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                 data-parent="#accordionSidebar">
+            <div id="collapseProducts" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">상품 관리:</h6>
+                    <h6 class="collapse-header">판매 상품 관리:</h6>
                     <a class="collapse-item" th:href="@{/api/v1/products}">판매 상품 목록</a>
-                    <a class="collapse-item" th:href="@{/api/v1/products/save}">판매 상품 등록</a>
+                    <a class="collapse-item" th:href="@{/api/v1/products/bulkSave}">상품 엑셀 등록</a>
+                    <a class="collapse-item" th:href="@{/api/v1/products/save}">상품 등록</a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Nav Item - Utilities Collapse Menu-->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRetail" aria-expanded="true" aria-controls="collapseRetail">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>도매 상품 관리</span>
+            </a>
+            <div id="collapseRetail" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">도매 상품 관리:</h6>
+                    <a class="collapse-item" th:href="@{/api/v1/retails}">도매 상품 목록</a>
+                    <a class="collapse-item" th:href="@{/api/v1/retails/bulkSave}">도매 상품 엑셀 등록</a>
+                    <a class="collapse-item" th:href="@{/api/v1/retails/save}">도매 상품 등록</a>
                 </div>
             </div>
         </li>
@@ -128,7 +123,13 @@
 
     </ul>
     <!-- End of Sidebar -->
-
+    <script th:inline="javascript">
+        const menu = document.querySelectorAll(".nav-item");
+        for (let i = 0; i < menu.length; i++) {
+            menu[i].addEventListener("click", () => {
+                menu[i].classList.add("active")
+            });
+        }
+    </script>
 </th:block>
-
 </html>

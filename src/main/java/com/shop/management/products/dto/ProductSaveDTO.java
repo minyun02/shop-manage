@@ -1,6 +1,6 @@
 package com.shop.management.products.dto;
 
-public record ProductUpdateDTO(
+public record ProductSaveDTO(
         Long productId
         , String productName
         , String option

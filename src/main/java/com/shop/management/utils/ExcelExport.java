@@ -1,7 +1,8 @@
 package com.shop.management.utils;
 
-import com.shop.management.orderCollect.OrdersCollectDTO;
+import com.shop.management.products.dto.ProductsCollectDTO;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ExcelExport<T> {
+public class ExcelExport {
     private static final int ROW_START_INDEX = 0;
     private static final int COLUMN_START_INDEX = 0;
 
@@ -21,12 +22,12 @@ public class ExcelExport<T> {
     private SXSSFSheet sheet;
 
 
-    public ExcelExport(ArrayList<OrdersCollectDTO> data) {
+    public ExcelExport(ArrayList<ProductsCollectDTO> data) {
         this.wb = new SXSSFWorkbook();
         renderExcel(data);
     }
 
-    private void renderExcel(ArrayList<OrdersCollectDTO> data) {
+    private void renderExcel(ArrayList<ProductsCollectDTO> data) {
         sheet = wb.createSheet();
         List<String> columns = Arrays.stream("상품명,옵션,수량".split(",")).toList();
 //        createHeaders(sheet, ROW_START_INDEX, COLUMN_START_INDEX, objectType);
@@ -36,7 +37,7 @@ public class ExcelExport<T> {
 
         int rowIndex = ROW_START_INDEX + 1;
 
-        for (OrdersCollectDTO order : data) {
+        for (ProductsCollectDTO order : data) {
             createBody(order, rowIndex++, COLUMN_START_INDEX, columns);
         }
 
@@ -51,21 +52,21 @@ public class ExcelExport<T> {
         }
     }
 
-    private void createBody(OrdersCollectDTO order, int i, int columnStartIndex, List<String> columns) {
+    private void createBody(ProductsCollectDTO product, int i, int columnStartIndex, List<String> columns) {
         SXSSFRow row = sheet.createRow(i);
 
         for (String column : columns) {
             SXSSFCell cell = row.createCell(columnStartIndex++);
             if ("상품명".equals(column)) {
-                cell.setCellValue(order.getProductName());
+                cell.setCellValue(product.productName());
                 continue;
             }
             if ("옵션".equals(column)) {
-                cell.setCellValue(order.getOption());
+                cell.setCellValue(product.option());
                 continue;
             }
             if ("수량".equals(column)) {
-                cell.setCellValue(order.getQuantity());
+                cell.setCellValue(product.quantity());
             }
         }
     }
