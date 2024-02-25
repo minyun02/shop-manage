@@ -30,13 +30,12 @@
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
-<!--      <div class="card-header py-3">-->
-<!--        <h6 class="m-0 font-weight-bold text-primary">주문 합치기</h6>-->
-<!--        <a href="#" onclick="document.forms['excelDownload'].submit()" class="btn btn-dark">엑셀 다운로드</a>-->
-<!--      </div>-->
+      <div class="card-header py-3">
+        <a href="#" onclick="document.forms['excelDownload'].submit()" class="btn btn-dark">엑셀 다운로드</a>
+      </div>
       <div class="card-body">
         <div class="table-responsive">
-<!--          <form id="excelDownload" action="/api/v1/products/" method="POST" enctype="multipart/form-data">-->
+          <form id="excelDownload" action="/api/v1/products/excelDownload" method="POST" enctype="multipart/form-data">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
               <thead>
               <tr>
