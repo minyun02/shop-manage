@@ -69,13 +69,16 @@ public class ProductsService {
 
             boolean isDuplicated = false;
             for (Products product : products) {
-                System.out.println("product = " + product.getProductName() + "+" + product.getOption());
-                if (entry.getKey().equals(product.getProductName() + "+" + product.getOption())) {
+
+                if (entry.getKey().equals(product.getProductName() + "^^" + product.getOption())) {
                     isDuplicated = true;
                 }
+
             }
 
-            ordersForTable.add(ProductsCollectDTO.of(entry.getKey().split("\\+")[0], entry.getKey().split("\\+")[1], entry.getValue(), isDuplicated));
+            String[] key = entry.getKey().split("\\^\\^");
+
+            ordersForTable.add(ProductsCollectDTO.of(key[0], key[1], entry.getValue(), isDuplicated));
         }
 
     }
@@ -90,9 +93,12 @@ public class ProductsService {
             int skipFirstRow = 0;
             for (Row cells : sheet) {
                 if (skipFirstRow++ > 0) {
+
                     String productName = cells.getCell(17).getStringCellValue();
                     String option = cells.getCell(20).getStringCellValue();
-                    orders.put(productName + "+" + option, 1 + orders.getOrDefault(productName + "+" + option, 0));
+                    String key = productName + "^^" + option;
+                    orders.put(key, 1 + orders.getOrDefault(key, 0));
+
                 }
             }
         } catch (IOException e) {
