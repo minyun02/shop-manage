@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/default}"
+>
+
+<th:block layout:fragment="content">
+  <div class="container-fluid">
+
+    <h1 class="h3 mb-2 text-gray-800">플랫폼 주문 취합</h1>
+    <p class="mb-4">주문을 취합해보세요.</p>
+<!--    <a target="_blank" href="https://datatables.net">official DataTables documentation</a>-->
+
+    <div style="display: flex;">
+      <select id="platform" class="custom-select w-25 h-25" aria-label="Default select example">
+        <option selected>선택</option>
+        <option value="zigzag">지그재그</option>
+        <option value="smartStore">스마트스토어</option>
+      </select>
+      <div class="input-group mb-3 w-50 h-25">
+        <div class="input-group-prepend">
+          <span class="input-group-text">엑셀업로드</span>
+        </div>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="orderExcelInput" name="orderExcel">
+          <label id="excelLabel" class="custom-file-label" for="orderExcelInput">찾아보기</label>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary w-auto h-25" onclick="validateFileField()">저장</button>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <a href="#" onclick="document.forms['excelDownload'].submit()" class="btn btn-dark">엑셀 다운로드</a>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <form id="excelDownload" action="/api/v1/orders/excelDownload" method="POST" enctype="multipart/form-data">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+              <tr>
+                <th>상품명</th>
+                <th>옵션</th>
+                <th>수량</th>
+                <th>플랫폼</th>
+              </tr>
+              </thead>
+              <tbody id="excelTableBody">
+                <tr th:each="order : ${orders}">
+                  <td th:text="${order.getProductName()}"></td>
+                  <td th:text="${order.getOption()}"></td>
+                  <td th:text="${order.getTotalQuantity()}"></td>
+                  <td th:text="${order.getPlatformMap()}"></td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script th:inline="javascript">
+    // $('#dataTable').dataTable();
+
+    const drawExcelData = (data) => {
+      console.log(data)
+      location.reload();
+      // const body = document.getElementById("excelTableBody");
+      //
+      // Object.keys(data).map((key) => {
+      //   let row = document.createElement("tr");
+      //
+      //   let name = document.createElement("td")
+      //   name.innerText = key.split("!@#$")[0];
+      //   row.appendChild(name);
+      //
+      //   let option = document.createElement("td");
+      //   option.innerHTML = key.split("!@#$")[1];
+      //   row.appendChild(option);
+      //
+      //   let quantity = document.createElement("td");
+      //   quantity.innerHTML = data[key];
+      //   row.appendChild(quantity);
+      //
+      //   let saveTd = document.createElement("td");
+      //   let saveBtn = document.createElement("button");
+      //   saveBtn.classList.add("btn");
+      //   saveBtn.classList.add("btn-primary");
+      //   saveBtn.innerText = "등록";
+      //   saveTd.appendChild(saveBtn);
+      //   row.appendChild(saveTd);
+      //
+      //   body.appendChild(row);
+                // <tr>
+          // <td name="name"></td>
+          // <td>
+          //   <button>등록</button>
+          // </td>
+        // </tr>
+
+      // });
+
+    }
+
+    async function sendAndDrawExcelData(formData) {
+
+      let res = await fetch("/api/v1/orders/readExcel", {
+        headers: {},
+        method: "POST",
+        body: formData
+      });
+      location.reload();
+      let json = await res.json();
+
+      drawExcelData(json);
+    }
+
+    const makeExcelData = (platform, file) => {
+      let formData = new FormData();
+      formData.append("platform", platform);
+      formData.append("excelFile", file);
+
+      return formData;
+    }
+
+    const validateSelectBox = () => {
+      const selectedIndex = document.getElementById("platform");
+      const file = document.getElementById("orderExcelInput").files[0];
+
+      if (selectedIndex.selectedIndex !== 0 && file !== undefined) {
+        makeExcelData(selectedIndex.value, file);
+      }
+
+    }
+
+    const validateFileField = () => {
+      const selectedIndex = document.getElementById("platform");
+      const file = document.getElementById("orderExcelInput").files[0];
+      document.getElementById("excelLabel").innerText = file.name;
+
+      if (selectedIndex.selectedIndex !== 0 && file !== undefined) {
+        let formData = makeExcelData(selectedIndex.value, file);
+        let data = sendAndDrawExcelData(formData);
+        return;
+      }
+
+      if (selectedIndex.selectedIndex === 0) {
+        alert("플랫폼을 선택해주세요.");
+        return;
+      }
+    }
+
+    document.getElementById("platform").addEventListener("change", () => {
+      validateSelectBox();
+    });
+
+    document.getElementById("orderExcelInput").addEventListener("change", () => {
+      validateFileField();
+    });
+
+  </script>
+</th:block>
+</html>
