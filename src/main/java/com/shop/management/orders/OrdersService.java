@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrdersService {
+    private final String JOIN_KEY = "!@#";
 
     private final OrdersRepository ordersRepository;
 
@@ -45,8 +45,8 @@ public class OrdersService {
         List<OrdersDTO> result = new ArrayList<>();
 
         for (Map.Entry<String, Integer> order : orderMap.entrySet()) {
-            String name = order.getKey().split("!@#")[0];
-            String option = order.getKey().split("!@#")[1];
+            String name = order.getKey().split(JOIN_KEY)[0];
+            String option = order.getKey().split(JOIN_KEY)[1];
 
             OrdersDTO dto = new OrdersDTO();
             dto.setOrderKey(order.getKey());
@@ -81,7 +81,7 @@ public class OrdersService {
                 if (cell.getRowNum() >= startRow) {
                     String productName = cell.getCell(fields[0], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getStringCellValue();
                     String option = cell.getCell(fields[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getStringCellValue();
-                    String key = productName + "!@#" + option;
+                    String key = productName + JOIN_KEY + option;
 
                     Integer quantity = 0;
                     if ("zigzag".equals(platform)) {
