@@ -120,7 +120,7 @@ public class OrdersService {
         if (search == null) search = "default";
         return switch (search) {
             case "all" -> ordersRepository.findAllGroupByOrderKey();
-            case "zigzag", "smartstore" ->
+            case "zigzag", "smartStore" ->
                     ordersRepository.findByPlatform(search).stream().map(OrdersDTO::fromEntity).toList();
             default ->
                     ordersRepository.findAll(Sort.by(Sort.Direction.DESC, "platform")).stream().map(OrdersDTO::fromEntity).toList();
