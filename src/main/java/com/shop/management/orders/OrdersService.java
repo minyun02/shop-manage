@@ -117,7 +117,7 @@ public class OrdersService {
     }
 
     public List<OrdersDTO> getAllOrders(String search) {
-        System.out.println("search = " + search);
+        if (search == null) search = "default";
         return switch (search) {
             case "all" -> ordersRepository.findAllGroupByOrderKey();
             case "zigzag", "smartstore" ->
