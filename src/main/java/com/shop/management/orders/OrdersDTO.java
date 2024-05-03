@@ -9,13 +9,20 @@ public class OrdersDTO {
     private String orderKey;
     private String productName;
     private String option;
-    private String platformMap;
+    private String platform;
     private Integer totalQuantity;
 
-    private OrdersDTO(String productName, String option, String platformMap, Integer totalQuantity) {
+    private OrdersDTO(String productName, String option, String platform, Integer totalQuantity) {
         this.productName = productName;
         this.option = option;
-        this.platformMap = platformMap;
+        this.platform = platform;
+        this.totalQuantity = totalQuantity;
+    }
+
+    public OrdersDTO(String orderKey, Integer totalQuantity) {
+        this.orderKey = orderKey;
+        this.productName = orderKey.split("!@#")[0];
+        this.option = orderKey.split("!@#")[1];
         this.totalQuantity = totalQuantity;
     }
 

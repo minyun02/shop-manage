@@ -38,6 +38,6 @@ public class Orders {
     }
 
     public static Orders fromDTO(OrdersDTO dto) {
-        return new Orders(dto.getOrderKey(), dto.getProductName(), dto.getOption(), dto.getTotalQuantity(), dto.getPlatformMap());
+        return new Orders(dto.getOrderKey(), dto.getProductName(), dto.getOption(), dto.getTotalQuantity(), dto.getPlatform());
     }
 }

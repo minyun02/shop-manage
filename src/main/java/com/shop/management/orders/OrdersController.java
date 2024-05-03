@@ -15,9 +15,9 @@ public class OrdersController {
     private final OrdersService ordersService;
 
     @GetMapping
-    public String orders(ModelMap model) {
-
-        model.addAttribute("orders", ordersService.getAllOrders());
+    public String orders(@RequestParam(required = false) String search, ModelMap model) {
+        System.out.println("search = " + search);
+        model.addAttribute("orders", ordersService.getAllOrders(search));
 
         return "orders/orders";
     }

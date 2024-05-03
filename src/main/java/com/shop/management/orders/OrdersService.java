@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +52,7 @@ public class OrdersService {
             dto.setOrderKey(order.getKey());
             dto.setProductName(name);
             dto.setOption(option);
-            dto.setPlatformMap(platform);
+            dto.setPlatform(platform);
             dto.setTotalQuantity(order.getValue());
 
             result.add(dto);
@@ -115,7 +116,13 @@ public class OrdersService {
         return new Integer[]{};
     }
 
-    public List<OrdersDTO> getAllOrders() {
-        return ordersRepository.findAll(Sort.by(Sort.Direction.DESC, "platform")).stream().map(OrdersDTO::fromEntity).toList();
+    public List<OrdersDTO> getAllOrders(String search) {
+        return switch (search) {
+            case "all" -> ordersRepository.findAllGroupByOrderKey();
+            case "zigzag", "smartstore" ->
+                    ordersRepository.findByPlatform(search).stream().map(OrdersDTO::fromEntity).toList();
+            default ->
+                    ordersRepository.findAll(Sort.by(Sort.Direction.DESC, "platform")).stream().map(OrdersDTO::fromEntity).toList();
+        };
     }
 }
