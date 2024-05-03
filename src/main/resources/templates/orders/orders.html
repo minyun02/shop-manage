@@ -39,7 +39,7 @@
             <option value="byPlatforms" th:selected="${param.search == null or #strings.equals(param.search, 'byPlatforms')}">플랫폼별 조회</option>
             <option value="all" th:selected="${#strings.equals(param.search, 'all')}">통합</option>
             <option value="zigzag" th:selected="${#strings.equals(param.search, 'zigzag')}">지그재그</option>
-            <option value="smartstore" th:selected="${#strings.equals(param.search, 'smartstore')}">스마트스토어</option>
+            <option value="smartStore" th:selected="${#strings.equals(param.search, 'smartStore')}">스마트스토어</option>
           </select>
         </form>
       </div>
