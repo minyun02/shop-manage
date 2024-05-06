@@ -48,17 +48,11 @@
             <table
                     class="table table-bordered"
                     id="dataTable"
-                    width="100%"
-                    cellspacing="0"
                     data-text="dataTable"
             >
               <thead>
               <tr>
-                <th>
-                  <label>
-                    <input type="checkbox" class="custom-checkbox"/>
-                  </label>
-                </th>
+                <th data-checkbox="true"></th>
                 <th data-sortable="true">상품명</th>
                 <th data-sortable="true">옵션</th>
                 <th data-sortable="true">수량</th>
@@ -67,11 +61,7 @@
               </thead>
               <tbody id="excelTableBody">
                 <tr th:each="order : ${orders}">
-                  <td>
-                    <label>
-                      <input type="checkbox" class="custom-checkbox"/>
-                    </label>
-                  </td>
+                  <td></td>
                   <td th:text="${order.getProductName()}"></td>
                   <td th:text="${order.getOption()}"></td>
                   <td th:text="${order.getTotalQuantity()}"></td>
