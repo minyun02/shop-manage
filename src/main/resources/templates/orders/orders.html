@@ -50,6 +50,7 @@
                     id="dataTable"
                     width="100%"
                     cellspacing="0"
+                    data-text="dataTable"
             >
               <thead>
               <tr>
@@ -85,6 +86,8 @@
 
   </div>
   <script th:inline="javascript">
+    $('#dataTable').bootstrapTable({});
+
     const drawExcelData = (data) => {
       console.log(data)
       location.reload();
