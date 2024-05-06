@@ -2,18 +2,23 @@ package com.shop.management.orders;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OrdersService {
     private final String JOIN_KEY = "!@#";
+    private final String ZIGZAG = "zigzag";
+    private final String SMART_STORE = "smartStore";
 
     private final OrdersRepository ordersRepository;
 
@@ -66,12 +71,12 @@ public class OrdersService {
 
         try {
             Workbook wb = null;
-            if ("zigzag".equals(platform)) {
+            if (ZIGZAG.equals(platform)) {
                 wb = new XSSFWorkbook(excelFile.getInputStream());
             }
 
-            if ("smartStore".equals(platform)) {
-                wb = WorkbookFactory.create(excelFile.getInputStream(), "1111");
+            if (SMART_STORE.equals(platform)) {
+                wb = createWorkbookForSmartStoreWithPassword(excelFile);
             }
             Sheet sheet = wb.getSheetAt(0);
 
@@ -81,14 +86,15 @@ public class OrdersService {
                 if (cell.getRowNum() >= startRow) {
                     String productName = cell.getCell(fields[0], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getStringCellValue();
                     String option = cell.getCell(fields[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getStringCellValue();
-                    String key = productName + JOIN_KEY + option;
+
+                    String key = productName + JOIN_KEY + option.toLowerCase();
 
                     Integer quantity = 0;
-                    if ("zigzag".equals(platform)) {
+                    if (ZIGZAG.equals(platform)) {
                         quantity = Integer.parseInt(cell.getCell(fields[2], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getStringCellValue());
                     }
 
-                    if ("smartStore".equals(platform)) {
+                    if (SMART_STORE.equals(platform)) {
                         quantity = (int) cell.getCell(fields[2], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getNumericCellValue();
                     }
 
@@ -102,14 +108,24 @@ public class OrdersService {
         return orders;
     }
 
+    private static Workbook createWorkbookForSmartStoreWithPassword(MultipartFile excelFile) {
+        Workbook wk = null;
+        try {
+            wk = WorkbookFactory.create(excelFile.getInputStream(), "1111");
+        } catch (Exception e) {
+            log.error("Exception thrown while creating workbookFactory for smartstore {}", e);
+        }
+        return wk;
+    }
+
     private Integer[] setOrderExcelFieldsIndex(String platform) {
 
         //상품명, 옵션, 수량, 가격
-        if ("zigzag".equals(platform)) {
+        if (ZIGZAG.equals(platform)) {
             return new Integer[]{17, 20, 24, 23};
         }
 
-        if ("smartStore".equals(platform)) {
+        if (SMART_STORE.equals(platform)) {
             return new Integer[]{18, 21, 23, 28};
         }
 
@@ -120,7 +136,7 @@ public class OrdersService {
         if (search == null) search = "default";
         return switch (search) {
             case "all" -> ordersRepository.findAllGroupByOrderKey();
-            case "zigzag", "smartStore" -> ordersRepository.findByPlatform(search).stream().map(OrdersDTO::fromEntity).toList();
+            case ZIGZAG, SMART_STORE -> ordersRepository.findByPlatform(search).stream().map(OrdersDTO::fromEntity).toList();
             default -> ordersRepository.findAll(Sort.by(Sort.Direction.DESC, "platform")).stream().map(OrdersDTO::fromEntity).toList();
         };
     }
