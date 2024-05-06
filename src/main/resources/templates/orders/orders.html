@@ -7,6 +7,40 @@
 <th:block layout:fragment="content">
   <style>
     thead th{background:#eee; cursor:pointer;}
+
+    .loading-container {
+      position: absolute;
+      top: 800%;
+      left: 40%;
+      max-width: 550px;
+      margin: auto;
+      padding: 0 1rem;
+      z-index: 999;
+    }
+
+    #loading {
+      width: 10rem;
+      height: 10rem;
+      border: 16px solid #f3f3f3;
+      border-top: 20px solid #414af2;
+      border-radius: 100%;
+      margin: auto;
+      visibility: hidden;
+      animation: spin 1s infinite cubic-bezier(0.4, 0, 1, 1);
+    }
+
+    #loading.display {
+      visibility: visible;
+    }
+    
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
   <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">플랫폼 주문 취합</h1>
@@ -75,10 +109,19 @@
         </div>
       </div>
     </div>
-
   </div>
   <script th:inline="javascript">
-    $('#dataTable').bootstrapTable({});
+    let $table = $('#dataTable');
+
+    $table.bootstrapTable({});
+
+    document.addEventListener('DOMContentLoaded', () => {
+      $table.bootstrapTable('showLoading');
+
+      setTimeout(() => {
+        $table.bootstrapTable('hideLoading');
+      }, 500);
+    });
 
     const drawExcelData = (data) => {
       console.log(data)
@@ -120,17 +163,26 @@
 
     }
 
-    async function sendAndDrawExcelData(formData) {
+    function getRandomQuote() {
+      const msg = ['멋쟁이 오혜진 화이팅!', '샵오르 주문 폭바아아알', '이교라 이교라 오혜진 이교라'];
+      let randomIdx = Math.floor(Math.random() * msg.length);
+      return msg[randomIdx];
+    }
 
-      let res = await fetch("/api/v1/orders/readExcel", {
+    async function sendAndDrawExcelData(formData) {
+      let loader = document.querySelector("#loading");
+      let output = document.querySelector("#show-output");
+
+      await fetch("/api/v1/orders/readExcel", {
         headers: {},
         method: "POST",
         body: formData
+      }).then((res) => {
+        location.reload();
       });
-      location.reload();
-      let json = await res.json();
+      // let json = await res.json();
 
-      drawExcelData(json);
+      // drawExcelData(json);
     }
 
     const makeExcelData = (platform, file) => {
@@ -151,14 +203,14 @@
 
     }
 
-    const validateFileField = () => {
+    const validateFileField = async () => {
       const selectedIndex = document.getElementById("platform");
       const file = document.getElementById("orderExcelInput").files[0];
       document.getElementById("excelLabel").innerText = file.name;
 
       if (selectedIndex.selectedIndex !== 0 && file !== undefined) {
         let formData = makeExcelData(selectedIndex.value, file);
-        let data = sendAndDrawExcelData(formData);
+        await sendAndDrawExcelData(formData);
         return;
       }
 
@@ -176,62 +228,6 @@
       validateFileField();
     });
 
-  </script>
-  <script>
-    function sortTable(n) {
-      let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-      table = document.getElementById("dataTable");
-      switching = true;
-      // Set the sorting direction to ascending:
-      dir = "asc";
-      /* Make a loop that will continue until
-      no switching has been done: */
-      while (switching) {
-        // Start by saying: no switching is done:
-        switching = false;
-        rows = table.rows;
-        /* Loop through all table rows (except the
-        first, which contains table headers): */
-        for (i = 1; i < (rows.length - 1); i++) {
-          // Start by saying there should be no switching:
-          shouldSwitch = false;
-          /* Get the two elements you want to compare,
-          one from current row and one from the next: */
-          x = rows[i].getElementsByTagName("TD")[n];
-          y = rows[i + 1].getElementsByTagName("TD")[n];
-          /* Check if the two rows should switch place,
-          based on the direction, asc or desc: */
-          if (dir == "asc") {
-            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-              // If so, mark as a switch and break the loop:
-              shouldSwitch = true;
-              break;
-            }
-          } else if (dir == "desc") {
-            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-              // If so, mark as a switch and break the loop:
-              shouldSwitch = true;
-              break;
-            }
-          }
-        }
-        if (shouldSwitch) {
-          /* If a switch has been marked, make the switch
-          and mark that a switch has been done: */
-          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-          switching = true;
-          // Each time a switch is done, increase this count by 1:
-          switchcount ++;
-        } else {
-          /* If no switching has been done AND the direction is "asc",
-          set the direction to "desc" and run the while loop again. */
-          if (switchcount == 0 && dir == "asc") {
-            dir = "desc";
-            switching = true;
-          }
-        }
-      }
-    }
   </script>
 </th:block>
 </html>
