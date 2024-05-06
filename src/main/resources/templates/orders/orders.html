@@ -4,14 +4,13 @@
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{layout/default}"
 >
-
 <th:block layout:fragment="content">
+  <style>
+    thead th{background:#eee; cursor:pointer;}
+  </style>
   <div class="container-fluid">
-
     <h1 class="h3 mb-2 text-gray-800">플랫폼 주문 취합</h1>
     <p class="mb-4">주문을 취합해보세요.</p>
-<!--    <a target="_blank" href="https://datatables.net">official DataTables documentation</a>-->
-
     <div style="display: flex;">
       <select id="platform" class="custom-select w-25 h-25" aria-label="Default select example">
         <option selected>플랫폼 선택</option>
@@ -46,17 +45,32 @@
       <div class="card-body">
         <div class="table-responsive">
           <form id="excelDownload" action="/api/v1/orders/excelDownload" method="POST" enctype="multipart/form-data">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <table
+                    class="table table-bordered"
+                    id="dataTable"
+                    width="100%"
+                    cellspacing="0"
+            >
               <thead>
               <tr>
-                <th>상품명</th>
-                <th>옵션</th>
-                <th>수량</th>
-                <th>플랫폼</th>
+                <th>
+                  <label>
+                    <input type="checkbox" class="custom-checkbox"/>
+                  </label>
+                </th>
+                <th data-sortable="true">상품명</th>
+                <th data-sortable="true">옵션</th>
+                <th data-sortable="true">수량</th>
+                <th data-sortable="true">플랫폼</th>
               </tr>
               </thead>
               <tbody id="excelTableBody">
                 <tr th:each="order : ${orders}">
+                  <td>
+                    <label>
+                      <input type="checkbox" class="custom-checkbox"/>
+                    </label>
+                  </td>
                   <td th:text="${order.getProductName()}"></td>
                   <td th:text="${order.getOption()}"></td>
                   <td th:text="${order.getTotalQuantity()}"></td>
@@ -71,8 +85,6 @@
 
   </div>
   <script th:inline="javascript">
-    // $('#dataTable').dataTable();
-
     const drawExcelData = (data) => {
       console.log(data)
       location.reload();
