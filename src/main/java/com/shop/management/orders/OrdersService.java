@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -84,18 +85,21 @@ public class OrdersService {
             for (Row cell : sheet) {
 
                 if (cell.getRowNum() >= startRow) {
-                    String productName = cell.getCell(fields[0], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getStringCellValue();
-                    String option = cell.getCell(fields[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getStringCellValue();
+                    String productName = CellUtil.getCell(cell, fields[0]).getStringCellValue();
+
+                    if (productName.isEmpty()) continue;
+
+                    Cell optionCell = cell.getCell(fields[1], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    String option = optionCell == null ? "-" : optionCell.getStringCellValue();
 
                     String key = productName + JOIN_KEY + option.toLowerCase();
-
-                    Integer quantity = 0;
+                    int quantity = 0;
                     if (ZIGZAG.equals(platform)) {
                         quantity = Integer.parseInt(cell.getCell(fields[2], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getStringCellValue());
                     }
 
                     if (SMART_STORE.equals(platform)) {
-                        quantity = (int) cell.getCell(fields[2], Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getNumericCellValue();
+                        quantity = (int) CellUtil.getCell(cell, fields[2]).getNumericCellValue();
                     }
 
                     orders.put(key, quantity + orders.getOrDefault(key, 0));
